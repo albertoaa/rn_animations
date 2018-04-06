@@ -3,17 +3,8 @@
  * https://github.com/facebook/react-native
  * @flow
  */
-
 import React, { Component } from 'react';
-import {
-  Animated,
-  Image,
-  Easing,
-  Platform,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import { Animated, Easing, Text, TouchableHighlight, ScrollView, Platform, StyleSheet, View } from 'react-native';
 
 const instructions = Platform.select({
   ios: 'Press Cmd+R to reload,\n' +
@@ -26,57 +17,70 @@ type Props = {};
 export default class App extends Component<Props> {
   constructor() {
     super();
-    this.spinValue = new Animated.Value(0);
+    this.animatedValue = new Animated.Value(0);
   }
-  componentDidMount () {
-    this.spin();
-  }
-  spin() {
-    this.spinValue.setValue(0);
+  
+  animate(easing) {
+    this.animatedValue.setValue(0);
     Animated.timing(
-      this.spinValue,
+      this.animatedValue,
       {
         toValue: 1,
-        duration: 4000,
-        easing: Easing.linear
+        duration: 1000,
+        easing
       }
-    ).start(()=> this.spin())
+    ).start()
   }
   render() {
-    const spin = this.spinValue.interpolate({
-      inputRange: [0,1],
-      outputRange: ['0deg', '360deg']
+    const marginLeft = this.animatedValue.interpolate({
+      inputRange: [0, 1],
+      outputRange: [0, 260]
     })
     return (
       <View style={styles.container}>
-        <Animated.Image
-          style={{
-            width: 227,
-            height: 200,
-            transform: [{rotate: spin}]
-          }}
-          source={{uri: 'https://s3.amazonaws.com/media-p.slid.es/uploads/alexanderfarennikov/images/1198519/reactjs.png'}}
-        />
+        <Animated.View style={[styles.block, {marginLeft} ]}/>>
+        <ScrollView>
+          <Text style={{textAlign: 'center' }}>Scroll up for more animations</Text>
+          <Button easing='Bounce' onPress={this.animate.bind(this,Easing.bounce)}/>
+          <Button easing='Cubic' onPress={this.animate.bind(this,Easing.cubic)}/>
+          <Button easing='Back' onPress={this.animate.bind(this,Easing.back(2))}/>
+          <Button easing='Elastic' onPress={this.animate.bind(this,Easing.elastic(2))}/>
+          <Button easing='Ease' onPress={this.animate.bind(this,Easing.ease)}/>
+          <Button easing='InOut' onPress={this.animate.bind(this,Easing.quad)}/>
+          <Button easing='In' onPress={this.animate.bind(this,Easing.quad)}/>
+          <Button easing='Out' onPress={this.animate.bind(this,Easing.quad)}/>
+          <Button easing='Sin' onPress={this.animate.bind(this,Easing.sin)}/>
+          <Button easing='Linear' onPress={this.animate.bind(this,Easing.linear)}/>
+          <Button easing='Quad' onPress={this.animate.bind(this,Easing.quad)}/>
+        </ScrollView>
       </View>
     );
   }
 }
 
+const Button = ({onPress, easing}) => (
+  <TouchableHighlight style={styles.button} onPress={onPress}>
+    <Text>{easing}</Text>
+  </TouchableHighlight>
+)
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    marginTop:60
+  },
+  button: {
+    height: 60,
+    marginLeft: 10,
+    marginRight: 10,
+    backgroundColor: "#ededed",
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    marginTop: 10
   },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+  block: {
+    width: 50,
+    height: 50,
+    backgroundColor: 'red'
+  }
 });
