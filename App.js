@@ -29,7 +29,7 @@ export default class App extends Component<Props> {
     this.spinValue = new Animated.Value(0);
   }
   componentDidMount () {
-    this.spinValue();
+    this.spin();
   }
   spin() {
     this.spinValue.setValue(0);
@@ -43,17 +43,20 @@ export default class App extends Component<Props> {
     ).start(()=> this.spin())
   }
   render() {
+    const spin = this.spinValue.interpolate({
+      inputRange: [0,1],
+      outputRange: ['0deg', '360deg']
+    })
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit App.js
-        </Text>
-        <Text style={styles.instructions}>
-          {instructions}
-        </Text>
+        <Animated.Image
+          style={{
+            width: 227,
+            height: 200,
+            transform: [{rotate: spin}]
+          }}
+          source={{uri: 'https://s3.amazonaws.com/media-p.slid.es/uploads/alexanderfarennikov/images/1198519/reactjs.png'}}
+        />
       </View>
     );
   }
